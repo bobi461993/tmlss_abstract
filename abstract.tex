@@ -21,6 +21,7 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{graphicx}
+\usepackage{array}
 
 \title{Building End-To-End Dialogue Systems Using Generative Hierarchical Neural Network Models}
 
@@ -72,11 +73,13 @@
 
 \section{Introduction}
 
-The impressive achievements of Recurrent Neural Networks (RNNs) have revolutionized the field of natural language processing in recent years. Due to their improved performance on tasks such as sentiment analysis, language translation, language modeling, they have become a staple approach for the industry and research community. \citet{DBLP:journals/corr/ChoMGBSB14} proposed a novel network architecture called RNN Encoder-Decoder that consists of two RNNs, later known as seq2seq (\citet{DBLP:journals/corr/SutskeverVL14}). As the name suggests, one RNN encodes a sequence of symbols into a fixed length vector representation, and the other decodes the representation into another sequence of symbols. This kind of architecture represented a real breakthrough for the field of machine translation, and a big step in the direction of automated chatting systems. What this model lacks when it comes to building such a system is the preservation of the conversational context. While in machine translation the actual translation depends only on the current utterance, in a real life conversation you have to keep track of previous information obtained along the way. \citet{DBLP:journals/corr/SordoniBVLSN15} proposed a model called Hierarchical Recurrent Encoder-Decoder (HRED), which builds on top of the seq2seq idea. It uses a horizontal stack of seq2seq models, binded by a contextual RNN. This allows the information to flow from the past, like in the case of an RNN model, where here each utterance is a different time step. The model architecture was extended to better suit the dialogue task. To carry out experiments, I used the MovieTriples dialogue dataset based on movie scripts, which was available upon request from the authors.
+The impressive achievements of Recurrent Neural Networks (RNNs) have revolutionized the field of natural language processing in recent years. Due to their improved performance on tasks such as sentiment analysis, language translation, language modeling, they have become a staple approach for the industry and research community. \citet{DBLP:journals/corr/ChoMGBSB14} proposed a novel network architecture called RNN Encoder-Decoder that consists of two RNNs, later known as seq2seq (\citet{DBLP:journals/corr/SutskeverVL14}). As the name suggests, one RNN encodes a sequence of symbols into a fixed length vector representation, and the other decodes the representation into another sequence of symbols. This kind of architecture represented a real breakthrough for the field of machine translation, and a big step in the direction of automated chatting systems. What this model lacks when it comes to building such a system is the preservation of the conversational context. While in machine translation the actual translation depends only on the current utterance, in a real life conversation you have to keep track of previous information obtained along the way. \citet{DBLP:journals/corr/SordoniBVLSN15} proposed a model called Hierarchical Recurrent Encoder-Decoder (HRED), which builds on top of the seq2seq idea. It uses a horizontal stack of seq2seq models, binded by a contextual RNN. This allows the information to flow from the past, like in the case of an RNN model, where here each utterance is a different time step. The model architecture was extended to better suit the dialogue task. To carry out experiments, the MovieTriples dialogue dataset was used, which is based on movie scripts\footnote{Available upon request from the authors}.
 
 \section{Model and Training}
 
-A representation of the HRED model architecture is given in Figure 1. A training sample, in this case, consists of a three-turn utterances coming from a dialog. The encoder is responsible of representing the input phrase as a fixed length vector. To better capture the full understanding of the utterance, the encoder uses a Bidirectional RNN (\citet{650093}). The output is obtained as the concatenation of the forward and backward runs of the Bidirectional RNN. The context RNN (middle part) maintains a history of the whole dialogue, by taking into consideration all the previous utterances that appeared up until now. The decoder's responsibility is to reproduce as accurately as possible the reply attached to the encoder's input. At each time step of the decoder, the network is trying to predict the next word in the utterance, using the current input word and the information from the context RNN. Thus, the decoder RNN models a conditional distribution based on a input \(x_t\) and a fixed length vector \(c\). For the embedding of the input words, the model uses the pretrained weights from word2vec \citet{DBLP:journals/corr/abs-1301-3781}, to better capture the meaning of each particular word.
+A representation of the HRED model architecture is given in Figure 1. A training sample, in this case, consists of a three-turn utterances coming from a dialogue. Since vanilla RNN suffers from the well-known vanishing/exploding gradient problem, the GRU cell proposed by \citet{DBLP:journals/corr/ChoMGBSB14} was used for this network. The encoder is responsible of representing the input phrase as a fixed length vector. To better capture the full understanding of the utterance, the encoder uses a Bidirectional RNN (\citet{650093}). The output is obtained as the concatenation of the forward and backward runs of the Bidirectional RNN. The context RNN (middle part) maintains a history of the whole dialogue, by taking into consideration all the previous utterances that appeared up until now. The decoder's responsibility is to reproduce as accurately as possible the reply attached to the encoder's input. At each time step of the decoder, the network is trying to predict the next word in the utterance, using the current input word and the information from the context RNN. Thus, the decoder RNN models a conditional distribution based on a input \(x_t\) and a fixed length vector \(c\). For the embeddings of the input words, the model uses pretrained weights from word2vec (\citet{DBLP:journals/corr/abs-1301-3781}), for a better semantical representation.  At inference time, beam search with a width of 3 was chosen as the sampling algorithm, as it is common in practice.
+
+The implementation and training of the model was done using Keras (\citet{chollet2015keras}) with TensorFlow (\citet{tensorflow2015-whitepaper}) as its back-end. The optimizer used was Adam (\cite{DBLP:journals/corr/KingmaB14}) with the default hyperparameters and a learning rate decay upon reaching a plateau. The available hardware was an Nvidia GeForce GTX 1080 Ti chipset, and the training took approximately two days until convergence.
 
 \begin{figure}
     \centering
@@ -86,246 +89,24 @@ A representation of the HRED model architecture is given in Figure 1. A training
 
 \section{Results}
 
-\section{Conclusion}
+The principal evaluation metric that was used to measure the quality of the system's replies was perplexity, which is a measure coming from information theory and it's value is \(e^{xent}\), where \(xent\) stands for cross entropy. The authors reported a perplexity of \textbf{26.31}, whilst this implementation produced a perplexity of \textbf{81.74}. Table 1 presents a sample conversation produced by the system:
 
-\section{Model and Training}
-
-\section{Headings: first level}
-\label{headings}
-
-All headings should be lower case (except for first word and proper
-nouns), flush left, and bold.
-
-First-level headings should be in 12-point type.
-
-\subsection{Headings: second level}
-
-Second-level headings should be in 10-point type.
-
-\subsubsection{Headings: third level}
-
-Third-level headings should be in 10-point type.
-
-\paragraph{Paragraphs}
-
-There is also a \verb+\paragraph+ command available, which sets the
-heading in bold, flush left, and inline with the text, with the
-heading followed by 1\,em of space.
-
-\section{Citations, figures, tables, references}
-\label{others}
-
-These instructions apply to everyone.
-
-\subsection{Citations within the text}
-
-The \verb+natbib+ package will be loaded for you by default.
-Citations may be author/year or numeric, as long as you maintain
-internal consistency.  As to the format of the references themselves,
-any style is acceptable as long as it is used consistently.
-
-The documentation for \verb+natbib+ may be found at
 \begin{center}
-  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-Of note is the command \verb+\citet+, which produces citations
-appropriate for use in inline text.  For example,
-\begin{verbatim}
-   \citet{hasselmo} investigated\dots
-\end{verbatim}
-produces
-\begin{quote}
-  Hasselmo, et al.\ (1995) investigated\dots
-\end{quote}
-
-If you wish to load the \verb+natbib+ package with options, you may
-add the following before loading the \verb+nips_2017+ package:
-\begin{verbatim}
-   \PassOptionsToPackage{options}{natbib}
-\end{verbatim}
-
-If \verb+natbib+ clashes with another package you load, you can add
-the optional argument \verb+nonatbib+ when loading the style file:
-\begin{verbatim}
-   \usepackage[nonatbib]{nips_2017}
-\end{verbatim}
-
-As submission is double blind, refer to your own published work in the
-third person. That is, use ``In the previous work of Jones et
-al.\ [4],'' not ``In our previous work [4].'' If you cite your other
-papers that are not widely available (e.g., a journal paper under
-review), use anonymous author names in the citation, e.g., an author
-of the form ``A.\ Anonymous.''
-
-\subsection{Footnotes}
-
-Footnotes should be used sparingly.  If you do require a footnote,
-indicate footnotes with a number\footnote{Sample of the first
-  footnote.} in the text. Place the footnotes at the bottom of the
-page on which they appear.  Precede the footnote with a horizontal
-rule of 2~inches (12~picas).
-
-Note that footnotes are properly typeset \emph{after} punctuation
-marks.\footnote{As in this example.}
-
-\subsection{Figures}
-
-All artwork must be neat, clean, and legible. Lines should be dark
-enough for purposes of reproduction. The figure number and caption
-always appear after the figure. Place one line space before the figure
-caption and one line space after the figure. The figure caption should
-be lower case (except for first word and proper nouns); figures are
-numbered consecutively.
-
-You may use color figures.  However, it is best for the figure
-captions and the paper body to be legible if the paper is printed in
-either black/white or in color.
-\begin{figure}[h]
-  \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
-\end{figure}
-
-\subsection{Tables}
-
-All tables must be centered, neat, clean and legible.  The table
-number and title always appear before the table.  See
-Table~\ref{sample-table}.
-
-Place one line space before the table title, one line space after the
-table title, and one line space after the table. The table title must
-be lower case (except for first word and proper nouns); tables are
-numbered consecutively.
-
-Note that publication-quality tables \emph{do not contain vertical
-  rules.} We strongly suggest the use of the \verb+booktabs+ package,
-which allows for typesetting high-quality, professional tables:
-\begin{center}
-  \url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-This package was used to typeset Table~\ref{sample-table}.
-
-\begin{table}[t]
-  \caption{Sample table title}
-  \label{sample-table}
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    \multicolumn{2}{c}{Part}                   \\
-    \cmidrule{1-2}
-    Name     & Description     & Size ($\mu$m) \\
-    \midrule
-    Dendrite & Input terminal  & $\sim$100     \\
-    Axon     & Output terminal & $\sim$10      \\
-    Soma     & Cell body       & up to $10^6$  \\
-    \bottomrule
+  \begin{table}[h]
+  \caption{Sample conversation}
+  \begin{tabular}{ | m{6.5cm} | m{6.5cm} |}
+    \hline
+    Real person & Chatbot \\ \hline
+    Are you a robot? & What are you doing? \\
+    Do you have feelings? & I don't know what you are talking about. \\
+    Tell me about yourself. & I know. It's not logical, it's not what I can do. Forget it. \\
+    \hline
   \end{tabular}
-\end{table}
+  \end{table}
+\end{center}
 
-\section{Final instructions}
-
-Do not change any aspects of the formatting parameters in the style
-files.  In particular, do not modify the width or length of the
-rectangle the text should fit into, and do not change font sizes
-(except perhaps in the \textbf{References} section; see below). Please
-note that pages should be numbered.
-
-\section{Preparing PDF files}
-
-Please prepare submission files with paper size ``US Letter,'' and
-not, for example, ``A4.''
-
-Fonts were the main cause of problems in the past years. Your PDF file
-must only contain Type 1 or Embedded TrueType fonts. Here are a few
-instructions to achieve this.
-
-\begin{itemize}
-
-\item You should directly generate PDF files using \verb+pdflatex+.
-
-\item You can check which fonts a PDF files uses.  In Acrobat Reader,
-  select the menu Files$>$Document Properties$>$Fonts and select Show
-  All Fonts. You can also use the program \verb+pdffonts+ which comes
-  with \verb+xpdf+ and is available out-of-the-box on most Linux
-  machines.
-
-\item The IEEE has recommendations for generating PDF files whose
-  fonts are also acceptable for NIPS. Please see
-  \url{http://www.emfield.org/icuwb2010/downloads/IEEE-PDF-SpecV32.pdf}
-
-\item \verb+xfig+ "patterned" shapes are implemented with bitmap
-  fonts.  Use "solid" shapes instead.
-
-\item The \verb+\bbold+ package almost always uses bitmap fonts.  You
-  should use the equivalent AMS Fonts:
-\begin{verbatim}
-   \usepackage{amsfonts}
-\end{verbatim}
-followed by, e.g., \verb+\mathbb{R}+, \verb+\mathbb{N}+, or
-\verb+\mathbb{C}+ for $\mathbb{R}$, $\mathbb{N}$ or $\mathbb{C}$.  You
-can also use the following workaround for reals, natural and complex:
-\begin{verbatim}
-   \newcommand{\RR}{I\!\!R} %real numbers
-   \newcommand{\Nat}{I\!\!N} %natural numbers
-   \newcommand{\CC}{I\!\!\!\!C} %complex numbers
-\end{verbatim}
-Note that \verb+amsfonts+ is automatically loaded by the
-\verb+amssymb+ package.
-
-\end{itemize}
-
-If your file contains type 3 fonts or non embedded TrueType fonts, we
-will ask you to fix it.
-
-\subsection{Margins in \LaTeX{}}
-
-Most of the margin problems come from figures positioned by hand using
-\verb+\special+ or other commands. We suggest using the command
-\verb+\includegraphics+ from the \verb+graphicx+ package. Always
-specify the figure width as a multiple of the line width as in the
-example below:
-\begin{verbatim}
-   \usepackage[pdftex]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]{myfile.pdf}
-\end{verbatim}
-See Section 4.4 in the graphics bundle documentation
-(\url{http://mirrors.ctan.org/macros/latex/required/graphics/grfguide.pdf})
-
-A number of width problems arise when \LaTeX{} cannot properly
-hyphenate a line. Please give LaTeX hyphenation hints using the
-\verb+\-+ command when necessary.
-
-\subsubsection*{Acknowledgments}
-
-Use unnumbered third level headings for the acknowledgments. All
-acknowledgments go at the end of the paper. Do not include
-acknowledgments in the anonymized submission, only in the final paper.
-
-\section*{References}
-
-References follow the acknowledgments. Use unnumbered first-level
-heading for the references. Any choice of citation style is acceptable
-as long as you are consistent. It is permissible to reduce the font
-size to \verb+small+ (9 point) when listing the references. {\bf
-  Remember that you can go over 8 pages as long as the subsequent ones contain
-  \emph{only} cited references.}
-\medskip
-
-\small
-
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms
-for connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and
-T.K.\ Leen (eds.), {\it Advances in Neural Information Processing
-  Systems 7}, pp.\ 609--616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS:
-  Exploring Realistic Neural Models with the GEneral NEural SImulation
-  System.}  New York: TELOS/Springer--Verlag.
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of
-learning and recall at excitatory recurrent synapses and cholinergic
-modulation in rat hippocampal region CA3. {\it Journal of
-  Neuroscience} {\bf 15}(7):5249-5262.
+\section{Conclusion}
+This project's purpose was learning to work with various state of the art methods involving natural language generation and at the same time getting a grasp on what it means to replicate some paper's results. While the final result did not match the one reported by the authors, this project represented a great learning experience.
 
 \bibliography{abstract}
 \bibliographystyle{plainnat}

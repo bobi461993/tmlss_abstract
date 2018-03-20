@@ -1,0 +1,41 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Cho et~al.(2014)Cho, van Merrienboer, G{\"{u}}l{\c{c}}ehre, Bougares,
+  Schwenk, and Bengio]{DBLP:journals/corr/ChoMGBSB14}
+Kyunghyun Cho, Bart van Merrienboer, {\c{C}}aglar G{\"{u}}l{\c{c}}ehre, Fethi
+  Bougares, Holger Schwenk, and Yoshua Bengio.
+\newblock Learning phrase representations using {RNN} encoder-decoder for
+  statistical machine translation.
+\newblock \emph{CoRR}, abs/1406.1078, 2014.
+\newblock URL \url{http://arxiv.org/abs/1406.1078}.
+
+\bibitem[Serban et~al.(2015)Serban, Sordoni, Bengio, Courville, and
+  Pineau]{DBLP:journals/corr/SerbanSBCP15}
+Iulian~Vlad Serban, Alessandro Sordoni, Yoshua Bengio, Aaron~C. Courville, and
+  Joelle Pineau.
+\newblock Hierarchical neural network generative models for movie dialogues.
+\newblock \emph{CoRR}, abs/1507.04808, 2015.
+\newblock URL \url{http://arxiv.org/abs/1507.04808}.
+
+\bibitem[Sordoni et~al.(2015)Sordoni, Bengio, Vahabi, Lioma, Simonsen, and
+  Nie]{DBLP:journals/corr/SordoniBVLSN15}
+Alessandro Sordoni, Yoshua Bengio, Hossein Vahabi, Christina Lioma, Jakob~Grue
+  Simonsen, and Jian{-}Yun Nie.
+\newblock A hierarchical recurrent encoder-decoder for generative context-aware
+  query suggestion.
+\newblock \emph{CoRR}, abs/1507.02221, 2015.
+\newblock URL \url{http://arxiv.org/abs/1507.02221}.
+
+\bibitem[Sutskever et~al.(2014)Sutskever, Vinyals, and
+  Le]{DBLP:journals/corr/SutskeverVL14}
+Ilya Sutskever, Oriol Vinyals, and Quoc~V. Le.
+\newblock Sequence to sequence learning with neural networks.
+\newblock \emph{CoRR}, abs/1409.3215, 2014.
+\newblock URL \url{http://arxiv.org/abs/1409.3215}.
+
+\end{thebibliography}
